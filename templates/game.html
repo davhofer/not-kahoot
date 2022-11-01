@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+
+{% block title %}Game {{id}}{% endblock %}
+ 
+
+{% block content %}
+<input id="gameId" type="hidden" value="{{id}}"/>
+<input id="isHost" type="hidden" value="{{isHost}}"/>
+
+<div class="form-field">
+    <p>Welcome to game {{id}}!</p>
+</div>
+
+
+<div id="display">
+
+<p>This is the lobby!</p>
+<div id="playerlist">
+    <h3>Players</h3>
+
+    {% for player in player_list %}
+    <p>{{player}}</p>
+    {% endfor %}
+</div>
+
+</div>
+
+
+
+{% if isHost %}
+<p>Host view</p>
+<div id="hostAction"><button id = "start" onclick="startGame()">Start game!</button></div>
+
+{% else %}
+<div id="select-displayname">
+<label for="displayname">Display Name</label><input type="text" id="displayname"/>
+<button onclick="select_displayname()">Join</button>
+</div>
+
+{% endif %}
+{% endblock %}
+
+ 
+{% block onconnect %}
+<script type="text/javascript" charset="utf-8">
+    var socket = io();
+
+    $(document).ready(function() {
+        socket.emit('host_join', {gameId: document.getElementById('gameId').value, ishost: document.getElementById('isHost').value});
+    });
+    
+    function select_displayname() {
+        socket.emit('player_join', {displayname: document.getElementById('displayname').value, gameId: document.getElementById('gameId').value});
+        $('#select-displayname').hide();
+    };
+
+    socket.on('player_join_game', function(data) {
+        console.log('player_join_game');
+        console.log(data);
+        $('#playerlist').append('<p>' + data['player_name'] + '</p>');
+    });
+
+    function startGame() {
+        socket.emit('host_start_game', {gameId: document.getElementById('gameId').value});
+    };
+
+    function getNext() {
+        socket.emit('get_next_question', {gameId: document.getElementById('gameId').value});
+    };
+
+    socket.on('start_game', function(data) {
+        getNext();
+    });
+
+    socket.on('next_question', function(data) {
+        // get data for next question
+        console.log('next question arrived');
+        console.log(data);
+
+        $('#hostAction').hide();
+        $('#display').replaceWith('<div id="display"><div id="countdown"></div><div id="question"></div><div id="answers"></div></div>');
+        $('#question').replaceWith('<div id="question">' + data['question'] + '</div>');
+        $('#answers').replaceWith('<div id="answers"></div>');
+        for(var i=0; i<data['answers'].length; i++) {
+            var ans = data['answers'][i];
+            $('#answers').append('<div><button onclick="submitAnswer(' + "'" + ans +  "'" + ')">' + ans + '</button></div>');
+        }  
+        if(document.getElementById('isHost').value == 'True') {
+            for(var child of document.getElementById('answers').getElementsByTagName('button')) {
+                child.disabled = "disabled";
+            }
+        }
+        console.log('got here');
+        
+        countdownTilTimeUp(data);
+        
+    });
+
+    function submitAnswer(ans) {
+        socket.emit('submit_answer', {gameId: document.getElementById('gameId').value, answer: ans});
+    };
+
+    socket.on('question_result', function(data){
+        // color the winning answers green, losing ones red
+        // update ranking?
+
+        console.log("got question result");
+        console.log($('#answers').find('button'));
+        console.log(data);
+        
+        for(var button of $('#answers').find('button')) {
+            console.log(button.innerHTML);
+
+            var winning = false;
+            for(var ans of data['winning_answers']) {
+                if(ans == button.innerHTML) {
+                    winning = true;
+                }
+            }
+            if(winning) {
+                button.style.backgroundColor = 'green';
+            } else {
+                button.style.backgroundColor = 'red';
+            }
+            
+        }
+        
+    });
+
+
+
+    function countdownTilTimeUp(data) {
+        var start = new Date().getTime();
+
+        var cdTime = 10;
+
+        var x = setInterval(function() {
+
+            // update countdown view
+
+
+
+            var now = new Date().getTime();
+            var timePassed = now - start;
+            var seconds = Math.floor((timePassed % (1000 * 60)) / 1000);
+
+            $('#countdown').replaceWith('<div id="countdown">' + (cdTime-seconds) + '</div>');
+
+            if(seconds > cdTime) {
+                clearInterval(x);
+                // time over
+                console.log('emit time_up');
+                
+                socket.emit('time_up', {gameId: document.getElementById('gameId').value})
+                $('#countdown').replaceWith('<div id="countdown">Time Up!</div>');
+                
+                for(var child of document.getElementById('answers').getElementsByTagName('button')) {
+                    child.disabled = "disabled";
+                }
+                if(document.getElementById('isHost').value == 'True') {
+                    $('#hostAction').show();
+                    $('#hostAction').replaceWith('<div id="hostAction"><button id = "next" onclick="triggerLeaderboard()">Show leaderboard</button></div>');
+
+                    
+                }
+            }
+
+
+
+
+         
+        }, 1000);
+    }
+
+    function triggerLeaderboard() {
+        socket.emit('trigger_leaderboard', {gameId: document.getElementById('gameId').value});
+    }
+
+
+    socket.on('show_leaderboard', function(data) {
+        console.log('console log data');
+        console.log(data);
+        var table = '<table><tr><th>Name</th><th>Points</th></tr>';
+        for(var elem of data['player_points']) {
+            table += '<tr><td>' + elem[0] + '</td><td>' + elem[1] + '</td></tr>';
+        }
+        table += '</table>';
+        $('#display').replaceWith('<div id="display"><h2>Leaderboard</h2><div>' + table + '</div></div>');
+        if(data['isLast']) {
+            $('#hostAction').replaceWith('<div id="hostAction"><button onclick="finish()">End</button></div>');
+
+        } else {
+            $('#hostAction').replaceWith('<div id="hostAction"><button id = "next" onclick="getNext()">Next Question!</button></div>');
+        }
+    });
+
+    // $(document).ready(function() {
+    //     $('table').tableSort({
+    //         animation:'slide',
+    //         speed:500
+    //     });
+    // });
+
+
+</script>
+
+
+{% endblock %}

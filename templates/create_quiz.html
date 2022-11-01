@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+
+{% block title %}Create new quiz{% endblock %}
+  
+
+
+{% block content %}
+<form action="#" method="post" id="qna-form">
+    <div id="questions">
+    <p>Question 1:</p><p><input type="text" name="q0"/></p>
+    <p>Answer 1:</p><p><input type="text" name="0_a0"/></p>
+    <p>Answer 2:</p><p><input type="text" name="0_a1"/></p>
+    <p>Answer 3:</p><p><input type="text" name="0_a2"/></p>
+    <p>Answer 4:</p><p><input type="text" name="0_a3"/></p>
+    <br>
+    </div>
+    
+
+    <input type="submit" value="Create!" />
+</form>
+<button onclick="addQuestion()">Add another question</button>
+{% endblock %}
+
+{% block onconnect %}
+<script>
+    var i = 0;
+    function addQuestion() {
+        i += 1;
+        $('#questions').append('<p>Question' + (i+1) + ':</p><p><input type="text" name="q' + i + '"/></p><p>Answer 1:</p><p><input type="text" name="' + i + '_a0"/></p><p>Answer 2:</p><p><input type="text" name="' + i + '_a1"/></p><p>Answer 3:</p><p><input type="text" name="' + i +'_a2"/></p><p>Answer 4:</p><p><input type="text" name="' + i +'_a3"/></p><br>');
+    };
+</script>
+{% endblock %}

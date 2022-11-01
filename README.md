@@ -13,7 +13,8 @@ or install the following manually:
 
 ## Usage
 To run the webserver:
-`python main.py`
+`python main.py`  
+then open the link shown in the console in the browser.
 
 
 ## TODO

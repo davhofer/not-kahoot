@@ -19,21 +19,6 @@ Play Kahoot
         </div>
     </form>
 
-        <!-- <form action="/player/">
-                <div class="form-field">
-                    <label id = "label">Display Name</label>
-                    <input id = "name" type = "text" name="name" autofocus/>
-                </div>
-                <br>
-                <div class="form-field">
-                    <label id = "label">Game Pin</label>
-                    <input id = "pin" type="number" name="pin"/>
-                </div>
-                <br>
-                <div class="form-field">
-                    <button id = "joinButton">Join</button>
-                </div>
-        </form> -->
     <br/>
     <button onclick="location.href='create/'" type="button">
         Click here to host a quiz!</button>
@@ -41,17 +26,5 @@ Play Kahoot
 {% endblock %}
 
 {% block onconnect %}
-<script type="text/javascript" charset="utf-8">
-    var socket = io();
 
-    
-    // socket.on('connect', function() {
-    //     socket.emit('welcome', {data: {msg: 'hello', user: '0'}});
-    // });
-    // socket.on('custom event', function(data) {
-    //     socket.emit('acknowl', {data: 'titties'});
-    //     document.getElementById('showroom').innerHTML = data;
-    // });
-
-</script>
 {% endblock %}

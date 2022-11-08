@@ -81,6 +81,7 @@
 
     // event that gets triggered when the next question arrives
     socket.on('next_question', function(data) {
+        answerSubmitted = false;
 
         var answerCard1 = '<div class="card"><div class="card-body"><p class="card-text">';
         var answerCard2 = '</p></div></div>';

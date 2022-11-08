@@ -30,12 +30,12 @@
 
 {% if isHost %}
 <p>You are the host.</p>
-<div id="hostAction"><button id = "start" onclick="startGame()">Start game!</button></div>
+<div id="hostAction"><button id = "start" onclick="startGame()" class="btn btn-primary" data-bs-toggle="button">Start game!</button></div>
 
 {% else %}
 <div id="select-displayname">
 <label for="displayname">Choose a display name</label><input type="text" id="displayname"/>
-<button onclick="select_displayname()">Join</button>
+<button onclick="select_displayname()" class="btn btn-primary" data-bs-toggle="button">Join</button>
 </div>
 
 {% endif %}
@@ -43,8 +43,11 @@
 
  
 {% block onconnect %}
+
+
 <script type="text/javascript" charset="utf-8">
     var socket = io();
+    var answerSubmitted = false;
 
     $(document).ready(function() {
         socket.emit('host_join', {gameId: document.getElementById('gameId').value, ishost: document.getElementById('isHost').value});
@@ -79,31 +82,56 @@
     // event that gets triggered when the next question arrives
     socket.on('next_question', function(data) {
 
+        var answerCard1 = '<div class="card"><div class="card-body"><p class="card-text">';
+        var answerCard2 = '</p></div></div>';
+
+        var answerGrid = `
+        <div id="answers" class="container">
+            <div class="row">
+                <div class="col">
+                    <div id='ans0'></div>
+                </div>
+                <div class="col">
+                    <div id='ans1'></div>
+                </div>
+            </div>
+            <div class="row" style="margin-top: 2em;">
+                <div class="col">
+                    <div id='ans2'></div>
+                </div>
+                <div class="col">
+                    <div id='ans3'></div>
+                </div>
+            </div>
+        </div>`;
+
         // update the page, add question and answers
         $('#hostAction').hide();
         $('#display').replaceWith('<div id="display"><div id="countdown"></div><div id="question"></div><div id="answers"></div></div>');
         $('#question').replaceWith('<div id="question">' + data['question'] + '</div>');
-        $('#answers').replaceWith('<div id="answers"></div>');
+        $('#answers').replaceWith(answerGrid);
 
         for(var i=0; i<data['answers'].length; i++) {
             var ans = data['answers'][i];
-            $('#answers').append('<div><button onclick="submitAnswer(' + "'" + ans +  "'" + ')">' + ans + '</button></div>');
+            $('#ans'+i).replaceWith('<div id="a' + i +'" class="card ans' + i + '" onclick="submitAnswer(' + "'a" + i + "'" +',' + "'" + ans +  "'" + ')"><div class="card-body"><p class="card-text">' + ans + '</p></div></div>');
         }  
 
-        // host can not submit answers
-        if(document.getElementById('isHost').value == 'True') {
-            for(var child of document.getElementById('answers').getElementsByTagName('button')) {
-                child.disabled = "disabled";
-            }
-        }
+        
         // start the countdown, time that players have to choose an answer       
         countdownTilTimeUp(data);
         
     });
 
     // players can submit an answer
-    function submitAnswer(ans) {
-        socket.emit('submit_answer', {gameId: document.getElementById('gameId').value, answer: ans});
+    function submitAnswer(elemId, ans) {
+        var colors = ['#196fc1', '#c57117', '#30a45a', '#841aa2'];
+        if(document.getElementById('isHost').value != 'True' && !answerSubmitted) {
+            socket.emit('submit_answer', {gameId: document.getElementById('gameId').value, answer: ans});
+            console.log(elemId);
+
+            document.getElementById(elemId).style.backgroundColor = colors[parseInt(elemId[1])];
+            answerSubmitted = true;
+        }
     };
 
     // event that gets triggered when the server returns the result, most selected answers
@@ -111,18 +139,18 @@
 
         // color the winning answers green, losing ones red
         
-        for(var button of $('#answers').find('button')) {
+        for(var card of $('#answers').find('.card')) {
 
             var winning = false;
             for(var ans of data['winning_answers']) {
-                if(ans == button.innerHTML) {
+                if(ans == card.firstChild.firstChild.innerHTML) {
                     winning = true;
                 }
             }
             if(winning) {
-                button.style.backgroundColor = 'green';
+                card.style.backgroundColor = '#12c93a';
             } else {
-                button.style.backgroundColor = 'red';
+                card.style.backgroundColor = '#ff370c';
             }
             
         }
@@ -168,7 +196,7 @@
                 // host sees button to continue, show leaderboard
                 if(document.getElementById('isHost').value == 'True') {
                     $('#hostAction').show();
-                    $('#hostAction').replaceWith('<div id="hostAction"><button id = "next" onclick="triggerLeaderboard()">Show leaderboard</button></div>');
+                    $('#hostAction').replaceWith('<div id="hostAction"><button id = "next" onclick="triggerLeaderboard()" class="btn btn-primary" data-bs-toggle="button">Show leaderboard</button></div>');
 
                     
                 }
@@ -199,10 +227,10 @@
 
         // if it was the last question, show special button
         if(data['isLast']) {
-            $('#hostAction').replaceWith('<div id="hostAction"><button onclick="finish()">End</button></div>');
+            $('#hostAction').replaceWith('<div id="hostAction"><button onclick="finish()" class="btn btn-primary" data-bs-toggle="button">End</button></div>');
         } else {
             // display button to go to next questoin
-            $('#hostAction').replaceWith('<div id="hostAction"><button id = "next" onclick="getNext()">Next Question!</button></div>');
+            $('#hostAction').replaceWith('<div id="hostAction"><button id = "next" onclick="getNext()" class="btn btn-primary" data-bs-toggle="button">Next Question!</button></div>');
         }
     });
 

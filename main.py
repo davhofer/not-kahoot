@@ -26,6 +26,12 @@ player_by_sid = dict()
 
 
 '''
+log some output to stdout on the server
+'''
+def log(msg):
+    print("===== LOG =====\n" + str(msg) + "\n")
+
+'''
 Index page, initially shown to the user. Redirects to an existing game when provided with a gameId.
 '''
 @app.route('/', methods=['GET', 'POST'])
@@ -117,7 +123,7 @@ def game(game_id):
             return f"<h2>This game has already started!</h2>"
 
     # get players that have joined so far
-    players = game['players']
+    players = current_game['players']
     player_list = list(players.keys())
 
     # show page
@@ -159,6 +165,8 @@ def player_join(data):
     
 
     games[gameId]['num_players'] += 1
+
+    log(f"Player {displayname} joined game {gameId}.")
     
     # notify the other players that a new one has joined
     socketio.emit('player_join_game', {'player_name': displayname})
@@ -222,11 +230,13 @@ def submit_answer(data):
 
         current_question_id = games[gameId]['next_question'] - 1
 
-        # all the naswers provided by players for this question
+        # all the answers provided by players for this question
         round_answers : list = games[gameId]['player_answers'][current_question_id]
 
         # order of submissions
         submission_no = len(round_answers) + 1
+
+        log(f"Answer submission: {player_name}, {answer}, nr. {submission_no}")
 
         # if the player submitted an answer before, remove it and only keep new one (players can change their mind)
         for i in range(len(round_answers)):
@@ -331,6 +341,8 @@ def trigger_leaderboard(data):
 
     # send leaderboard info
     socketio.emit('show_leaderboard', {'player_points': player_points, 'isLast': isLast})
+
+    
 
 
 

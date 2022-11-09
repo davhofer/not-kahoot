@@ -49,6 +49,10 @@
     var socket = io();
     var answerSubmitted = false;
 
+
+    // number of seconds the players have to submit answers
+    var cdTime = 20;
+
     $(document).ready(function() {
         socket.emit('host_join', {gameId: document.getElementById('gameId').value, ishost: document.getElementById('isHost').value});
     });
@@ -83,38 +87,20 @@
     socket.on('next_question', function(data) {
         answerSubmitted = false;
 
-        var answerCard1 = '<div class="card"><div class="card-body"><p class="card-text">';
-        var answerCard2 = '</p></div></div>';
 
-        var answerGrid = `
-        <div id="answers" class="container">
-            <div class="row">
-                <div class="col">
-                    <div id='ans0'></div>
-                </div>
-                <div class="col">
-                    <div id='ans1'></div>
-                </div>
-            </div>
-            <div class="row" style="margin-top: 2em;">
-                <div class="col">
-                    <div id='ans2'></div>
-                </div>
-                <div class="col">
-                    <div id='ans3'></div>
-                </div>
-            </div>
-        </div>`;
+        var answerGrid = document.getElementById('answerGrid').innerHTML;
 
         // update the page, add question and answers
         $('#hostAction').hide();
-        $('#display').replaceWith('<div id="display"><div id="countdown"></div><div id="question"></div><div id="answers"></div></div>');
-        $('#question').replaceWith('<div id="question">' + data['question'] + '</div>');
+        $('#display').replaceWith(`<div id="display"><div id="countdown">${cdTime}</div><div id="question"></div><div id="answers"></div></div>`);
+        $('#question').replaceWith(`<div id="question">${data['question']}</div>`);
         $('#answers').replaceWith(answerGrid);
 
         for(var i=0; i<data['answers'].length; i++) {
             var ans = data['answers'][i];
-            $('#ans'+i).replaceWith('<div id="a' + i +'" class="card ans' + i + '" onclick="submitAnswer(' + "'a" + i + "'" +',' + "'" + ans +  "'" + ')"><div class="card-body"><p class="card-text">' + ans + '</p></div></div>');
+            //$('#ans'+i).replaceWith('<div id="a' + i +'" class="card ans' + i + '" onclick="submitAnswer(' + "'a" + i + "'" +',' + "'" + ans +  "'" + ')"><div class="card-body"><p class="card-text">' + ans + '</p></div></div>');
+            $('#ans'+i).replaceWith(`<div id="a${i}" class="card ans${i}" onclick="submitAnswer('a${i}', '${ans}')"><div class="card-body"><p class="card-text">${ans}</p></div></div>`);
+
         }  
 
         
@@ -163,8 +149,6 @@
     function countdownTilTimeUp(data) {
         var start = new Date().getTime();
 
-        // number of seconds the players have to submit answers
-        var cdTime = 30;
 
         // function gets executed once every second
         var x = setInterval(function() {
@@ -175,7 +159,7 @@
             var seconds = Math.floor((timePassed % (1000 * 60)) / 1000);
 
             // update countdown
-            $('#countdown').replaceWith('<div id="countdown">' + (cdTime-seconds) + '</div>');
+            $('#countdown').replaceWith(`<div id="countdown">${cdTime-seconds}</div>`);
 
             // if time is over
             if(seconds > cdTime) {
@@ -247,6 +231,27 @@
 
 
 </script>
+
+<div id="answerGrid" style="visibility: hiddem">
+    <div id="answers" class="container">
+        <div class="row">
+            <div class="col">
+                <div id='ans0'></div>
+            </div>
+            <div class="col">
+                <div id='ans1'></div>
+            </div>
+        </div>
+        <div class="row" style="margin-top: 2em;">
+            <div class="col">
+                <div id='ans2'></div>
+            </div>
+            <div class="col">
+                <div id='ans3'></div>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 {% endblock %}

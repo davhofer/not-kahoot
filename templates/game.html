@@ -110,6 +110,8 @@ content %}
         console.log('on: next_question');
         answerSubmitted = false;
 
+        var letters = ['A', 'B', 'C', 'D']
+
 
         var answerGrid = `
         <div id="answers" class="box">
@@ -149,8 +151,12 @@ content %}
             //$('#ans'+i).replaceWith('<div id="a' + i +'" class="card ans' + i + '" onclick="submitAnswer(' + "'a" + i + "'" +',' + "'" + ans +  "'" + ')"><div class="card-body"><p class="card-text">' + ans + '</p></div></div>');
             
             // TODO: change host/client
-            $('#ans'+i).replaceWith(`<div id="a${i}" class="card ans${i}" style="height: 100%" onclick="submitAnswer('${i}')"><div class="card-body"><p class="card-text">${ans}</p></div></div>`);
-
+            if(document.getElementById('isHost').value == 'True') {
+                $('#ans'+i).replaceWith(`<div id="a${i}" class="card ans${i} fullHW" onclick="submitAnswer('${i}')"><div class="card-body flexCenter"><div class="ansLetter">${letters[i]}</div><p class="card-text ansTextHost">${ans}</p></div></div>`);
+            } else {
+                $('#ans'+i).replaceWith(`<div id="a${i}" class="card ans${i} fullHW" onclick="submitAnswer('${i}')"><div class="card-body flexCenter"><p class="card-text">${letters[i]}</p></div></div>`);
+            }
+            
         }  
 
         

@@ -255,7 +255,8 @@ def submit_answer(data):
     try:
         gameId = int(data['gameId'])
 
-        answer = data['answer']
+        answerId = data['answerId']
+        
 
         player_name = player_by_sid[request.sid]
 
@@ -267,7 +268,7 @@ def submit_answer(data):
         # order of submissions
         submission_no = len(round_answers) + 1
 
-        log(f"Answer submission: {player_name}, {answer}, nr. {submission_no}")
+        log(f"Answer submission: {player_name}, ans id {answerId}, nr. {submission_no}")
 
         # if the player submitted an answer before, remove it and only keep new one (players can change their mind)
         for i in range(len(round_answers)):
@@ -276,8 +277,10 @@ def submit_answer(data):
                 break
         
         # store answer
-        round_answers.append((player_name, answer, submission_no))
-    except:
+        round_answers.append((player_name, answerId, submission_no))
+    except Exception() as e:
+        print("EXCEPTION \n")
+        print(e)
         return
 
 
@@ -300,22 +303,27 @@ def time_up(data):
 
     current_round = current_game['next_question'] - 1
 
-    round_answers = current_game['player_answers'][current_round]
+    valid_answers = current_game['questions'][current_round]['answers']
+
+
+
+    player_answers = current_game['player_answers'][current_round]
 
     # which anwers (unique) were submitted
-    uniq_ans = [ans[1] for ans in round_answers]
+    uniq_ans = [ans[1] for ans in player_answers]
 
     # for each of them, how often
     uniq_ans_count = [uniq_ans.count(ans) for ans in uniq_ans]
 
     # max number
-    max_count = max(uniq_ans_count)
+
+    max_count = 0 if len(uniq_ans_count) == 0 else max(uniq_ans_count)
 
     # get answers which were submitted the max number of times
-    winning_answers = [uniq_ans[i] for i in range(len(uniq_ans)) if uniq_ans_count[i] == max_count]
+    winning_answer_ids = [uniq_ans[i] for i in range(len(uniq_ans)) if uniq_ans_count[i] == max_count]
 
     # players that submitted a winning answer
-    winning_players = [(ans[0], ans[2]) for ans in round_answers if ans[1] in winning_answers]
+    winning_players = [(ans[0], ans[2]) for ans in player_answers if ans[1] in winning_answer_ids]
 
     # sort order of submission
     winning_players = sorted(winning_players, key=lambda x:x[1])
@@ -340,9 +348,11 @@ def time_up(data):
         # give points
         players[player_name]['points'] += 2*n-i 
 
+    
+
     # send the winning answers to the players
     # TODO: send number of submissions for each answer, to display it nicely with the results
-    socketio.emit('question_result', {'winning_answers': winning_answers})
+    socketio.emit('question_result', {'winning_answer_ids': winning_answer_ids, 'num_answers': len(valid_answers)})
     
 
 
@@ -383,6 +393,11 @@ def trigger_leaderboard(data):
 
 # run server
 if __name__ == '__main__':
+    for q in QUESTIONS:
+        if len(q['answers']) > 4:
+            print('Each question can have max. 4 answers!')
+            exit()
+
     #socketio.run(app)
     app.run()
 

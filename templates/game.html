@@ -3,13 +3,13 @@ content %}
 <input id="gameId" type="hidden" value="{{id}}" />
 <input id="isHost" type="hidden" value="{{isHost}}" />
 
-<div class="form-field">
+<!-- <div class="form-field">
   <h3>Game Id: {{id}}!</h3>
-</div>
+</div> -->
 
 {% if isHost %}
 <div id="display">
-  <p>LOBBY</p>
+  <!-- <p>LOBBY</p> -->
   <p>waiting for players...</p>
   <div id="playerlist">
     <h3>Players</h3>
@@ -136,7 +136,7 @@ content %}
         // update the page, add question and answers
         $('#hostAction').hide();
         $('#display').replaceWith(`<div id="display"><div id="countdown">${cdTime}</div><div id="question"></div><div id="answers"></div></div>`);
-        $('#question').replaceWith(`<div id="question">${data['question']}</div>`);
+        $('#question').replaceWith(`<div id="question" class="question">${data['question']}</div>`);
         $('#answers').replaceWith(answerGrid);
 
         console.log(data['answers']);
@@ -257,7 +257,7 @@ content %}
                 // host sees button to continue, show leaderboard
                 if(document.getElementById('isHost').value == 'True') {
                     $('#hostAction').show();
-                    $('#hostAction').replaceWith('<div id="hostAction"><button id = "next" onclick="triggerLeaderboard()" class="btn btn-primary" data-bs-toggle="button">Show leaderboard</button></div>');
+                    $('#hostAction').replaceWith('<div id="hostAction"><button id = "next" onclick="triggerLeaderboard()" class="btn btn-primary button-h4g-green" data-bs-toggle="button">Show leaderboard</button></div>');
 
                     
                 }
@@ -292,7 +292,7 @@ content %}
             $('#hostAction').replaceWith('<div id="hostAction"><button onclick="finish()" class="btn btn-primary" data-bs-toggle="button">End</button></div>');
         } else {
             // display button to go to next questoin
-            $('#hostAction').replaceWith('<div id="hostAction"><button id = "next" onclick="getNext()" class="btn btn-primary" data-bs-toggle="button">Next Question!</button></div>');
+            $('#hostAction').replaceWith('<div id="hostAction"><button id = "next" onclick="getNext()" class="btn btn-primary button-h4g-green" data-bs-toggle="button">Next Question!</button></div>');
         }
     });
 

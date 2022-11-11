@@ -100,34 +100,37 @@ Returns game page, the place where all the action happens. A game with a given i
 '''
 @app.route('/<game_id>/')
 def game(game_id):
-    global games 
-    game_id = int(game_id)
+    try:
+        global games 
+        game_id = int(game_id)
 
-    # check that game exists
-    if game_id not in games.keys():
-        return f"<h2>This game does not exist!</h2>"
+        # check that game exists
+        if game_id not in games.keys():
+            return f"<h2>This game does not exist!</h2>"
 
-    current_game = games[game_id]
+        current_game = games[game_id]
 
-    # if this game has not yet been initialized, we are the host
-    host_flag = not current_game['initialized']
+        # if this game has not yet been initialized, we are the host
+        host_flag = not current_game['initialized']
 
-    # if the game has not yet been started, go to the lobby
-    lobby_flag = not current_game['hasStarted']
+        # if the game has not yet been started, go to the lobby
+        lobby_flag = not current_game['hasStarted']
 
-    current_game['initialized'] = True
+        current_game['initialized'] = True
 
-    # if game has already been initialized and has started: cannot join anymore
-    if not host_flag:
-        if not lobby_flag:
-            return f"<h2>This game has already started!</h2>"
+        # if game has already been initialized and has started: cannot join anymore
+        if not host_flag:
+            if not lobby_flag:
+                return f"<h2>This game has already started!</h2>"
 
-    # get players that have joined so far
-    players = current_game['players']
-    player_list = list(players.keys())
+        # get players that have joined so far
+        players = current_game['players']
+        player_list = list(players.keys())
 
-    # show page
-    return render_template('game.html', id=game_id, isHost=host_flag, player_list=player_list)
+        # show page
+        return render_template('game.html', id=game_id, isHost=host_flag, player_list=player_list)
+    except:
+        return
 
 '''
 event that gets triggered when the host (first connection) joins.

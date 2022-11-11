@@ -353,5 +353,6 @@ def trigger_leaderboard(data):
 
 # run server
 if __name__ == '__main__':
-    socketio.run(app)
+    #socketio.run(app)
+    app.run()
 

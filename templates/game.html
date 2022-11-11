@@ -3,13 +3,13 @@ content %}
 <input id="gameId" type="hidden" value="{{id}}" />
 <input id="isHost" type="hidden" value="{{isHost}}" />
 
-<div class="form-field">
+<!-- <div class="form-field">
   <h3>Game Id: {{id}}!</h3>
-</div>
+</div> -->
 
 {% if isHost %}
 <div id="display">
-  <p>LOBBY</p>
+  <!-- <p>LOBBY</p> -->
   <p>waiting for players...</p>
   <div id="playerlist">
     <h3>Players</h3>
@@ -129,7 +129,7 @@ content %}
         // update the page, add question and answers
         $('#hostAction').hide();
         $('#display').replaceWith(`<div id="display"><div id="countdown">${cdTime}</div><div id="question"></div><div id="answers"></div></div>`);
-        $('#question').replaceWith(`<div id="question">${data['question']}</div>`);
+        $('#question').replaceWith(`<div id="question" class="question">${data['question']}</div>`);
         $('#answers').replaceWith(answerGrid);
 
         for(var i=0; i<data['answers'].length; i++) {

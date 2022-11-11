@@ -6,6 +6,9 @@
         <title>{% block title %}{% endblock %}</title>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400;600;800&family=Nunito:wght@200;300;400;500;600;700;800;900&family=Open+Sans:wght@300;400&display=swap" rel="stylesheet"> 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
     </head>
     <body>
@@ -49,11 +52,11 @@
 
             .page {
                 background-color: #24274a;
-                height: 100vh;
-                display: flex;
+                min-height: 100vh;
                 justify-content: center;
                 align-items: center;
                 color: whitesmoke;
+                font-family: 'Montserrat';
             }
 
             .button-h4g-green {
@@ -62,6 +65,9 @@
                 border-radius: 100px;
                 width: 60%;
                 height: 40px;
+                font-weight: 600;
+                margin-top: 10px;
+                margin-bottom: 30px;
             }
 
             .displayname-input-field {
@@ -72,6 +78,7 @@
                 border-color: transparent;
                 text-align: center;
                 height: 40px;
+                font-weight: 400;
             }
 
             @media (max-width: 800px) {
@@ -90,27 +97,50 @@
                 text-align: center;
             }
 
+            .question {
+                font-weight: 600;
+                font-size: 40pt;
+            }
+
+            .game-name-big {
+                width: 100%;
+                height: 35vh;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-size: 50pt;
+                font-weight: 800;
+            }
+
+            .game-name-small {
+                width: 100%;
+                height: 35vh;
+                text-align: right;
+                font-size: 25pt;
+                font-weight: 800;
+            }
+
             h1 {
-                color: whitesmoke;
+                font-weight: 800;
+                font-size: 50pt;
             }
 
             h3 {
-                color: whitesmoke;
+                font-weight: 600;
             }
 
             p {
                 color: whitesmoke;
                 vertical-align: center;
+                font-weight: 200;
             }
         
         </style>
         <div class="page">
+            <div class="game-name-small">
+                <div style="padding-top: 30px; padding-right: 30px;">Vote4Most</div>
+            </div>
             <div class="container">
-                <div class="row content">
-                    <div class="col">
-                        <h1>GAME NAME TBD</h1>
-                    </div>
-                </div>
                 <div class="row content">
                     <div class="col">
                         {% block content %}

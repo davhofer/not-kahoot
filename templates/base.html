@@ -52,11 +52,83 @@
                 padding: 10px;
                 height: 80vh;
             }
+            .page {
+                background-color: #24274a;
+                height: 100vh;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                color: whitesmoke;
+            }
+
+            .button-h4g-green {
+                background-color: #afcf84;
+                border-color: transparent;
+                border-radius: 100px;
+                width: 60%;
+                height: 40px;
+            }
+
+            .displayname-input-field {
+                width: 60%;
+                margin-top: 10px;
+                margin-bottom: 10px;
+                border-radius: 100px;
+                border-color: transparent;
+                text-align: center;
+                height: 40px;
+            }
+
+            @media (max-width: 800px) {
+            /* CSS that should be displayed if width is equal to or less than 800px goes here */
+                .button-h4g-green {
+                    width: 100%;
+                }
+
+                .button-h4g-green {
+                    width: 60%;
+                }
+            }
+            
+
+            .content {
+                text-align: center;
+            }
+
+            h1 {
+                color: whitesmoke;
+            }
+
+            h3 {
+                color: whitesmoke;
+            }
+
+            p {
+                color: whitesmoke;
+                vertical-align: center;
+            }
         
         </style>
-        <h1>GAME NAME TBD</h1>
-        {% block content %}
-        {% endblock %}
+        <div class="page">
+            <div class="container">
+                <div class="row content">
+                    <div class="col">
+                        <h1>GAME NAME TBD</h1>
+                    </div>
+                </div>
+                <div class="row content">
+                    <div class="col">
+                        {% block content %}
+                    </div>
+                </div>
+                <div class="row content">
+                    <div class="col">
+                        {% endblock %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
 
         {% block onconnect %}
         <script type="text/javascript" charset="utf-8">

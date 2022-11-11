@@ -7,6 +7,7 @@ content %}
   <h3>Game Id: {{id}}!</h3>
 </div>
 
+{% if isHost %}
 <div id="display">
   <p>LOBBY</p>
   <p>waiting for players...</p>
@@ -18,14 +19,12 @@ content %}
     {% endfor %}
   </div>
 </div>
-
-{% if isHost %}
 <p>You are the host.</p>
 <div id="hostAction">
   <button
     id="start"
     onclick="startGame()"
-    class="btn btn-primary"
+    class="btn btn-primary button-h4g-green"
     data-bs-toggle="button"
   >
     Start game!
@@ -33,16 +32,31 @@ content %}
 </div>
 
 {% else %}
+<div id="display"></div>
 <div id="select-displayname">
-  <label for="displayname">Choose a display name</label
-  ><input type="text" id="displayname" />
-  <button
-    onclick="select_displayname()"
-    class="btn btn-primary"
-    data-bs-toggle="button"
-  >
-    Join
-  </button>
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <label for="displayname">Choose a display name</label>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <input type="text" id="displayname" class="displayname-input-field"/>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <button
+          onclick="select_displayname()"
+          class="btn btn-primary button-h4g-green"
+          data-bs-toggle="button"
+        >
+          Join
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
 
 {% endif %} {% endblock %} 
@@ -97,8 +111,25 @@ content %}
         answerSubmitted = false;
 
 
-        var answerGrid = document.getElementById('answerGrid').innerHTML;
-
+        var answerGrid = `<div id="answers" class="container">
+                            <div class="row">
+                                <div class="col">
+                                    <div id='ans0'></div>
+                                </div>
+                                <div class="col">
+                                    <div id='ans1'></div>
+                                </div>
+                            </div>
+                            <div class="row" style="margin-top: 2em;">
+                                <div class="col">
+                                    <div id='ans2'></div>
+                                </div>
+                                <div class="col">
+                                    <div id='ans3'></div>
+                                </div>
+                            </div>
+                        </div>`; 
+                        
         // update the page, add question and answers
         $('#hostAction').hide();
         $('#display').replaceWith(`<div id="display"><div id="countdown">${cdTime}</div><div id="question"></div><div id="answers"></div></div>`);

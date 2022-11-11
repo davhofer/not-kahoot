@@ -1,53 +1,55 @@
-{% extends "base.html" %}
-
-{% block title %}Game {{id}}{% endblock %}
- 
-
-{% block content %}
-<input id="gameId" type="hidden" value="{{id}}"/>
-<input id="isHost" type="hidden" value="{{isHost}}"/>
+{% extends "base.html" %} {% block title %}Game {{id}}{% endblock %} {% block
+content %}
+<input id="gameId" type="hidden" value="{{id}}" />
+<input id="isHost" type="hidden" value="{{isHost}}" />
 
 <div class="form-field">
-    <h3>Game Id: {{id}}!</h3>
+  <h3>Game Id: {{id}}!</h3>
 </div>
 
-
 <div id="display">
-
-<p>LOBBY</p>
-<p>waiting for players...</p>
-<div id="playerlist">
+  <p>LOBBY</p>
+  <p>waiting for players...</p>
+  <div id="playerlist">
     <h3>Players</h3>
 
     {% for player in player_list %}
     <p>{{player}}</p>
     {% endfor %}
+  </div>
 </div>
-
-</div>
-
-
 
 {% if isHost %}
 <p>You are the host.</p>
-<div id="hostAction"><button id = "start" onclick="startGame()" class="btn btn-primary" data-bs-toggle="button">Start game!</button></div>
+<div id="hostAction">
+  <button
+    id="start"
+    onclick="startGame()"
+    class="btn btn-primary"
+    data-bs-toggle="button"
+  >
+    Start game!
+  </button>
+</div>
 
 {% else %}
 <div id="select-displayname">
-<label for="displayname">Choose a display name</label><input type="text" id="displayname"/>
-<button onclick="select_displayname()" class="btn btn-primary" data-bs-toggle="button">Join</button>
+  <label for="displayname">Choose a display name</label
+  ><input type="text" id="displayname" />
+  <button
+    onclick="select_displayname()"
+    class="btn btn-primary"
+    data-bs-toggle="button"
+  >
+    Join
+  </button>
 </div>
 
-{% endif %}
-{% endblock %}
-
- 
-{% block onconnect %}
-
+{% endif %} {% endblock %} {% block onconnect %}
 
 <script type="text/javascript" charset="utf-8">
-    var socket = io();
-    var answerSubmitted = false;
+  var socket = io();
+  var answerSubmitted = false;
 
 
     // number of seconds the players have to submit answers
@@ -56,32 +58,28 @@
     $(document).ready(function() {
         socket.emit('host_join', {gameId: document.getElementById('gameId').value, ishost: document.getElementById('isHost').value});
     });
-    
-    // submit name of new player
-    function select_displayname() {
-        socket.emit('player_join', {displayname: document.getElementById('displayname').value, gameId: document.getElementById('gameId').value});
-        $('#select-displayname').hide();
-    };
+  });
 
-    // event that triggers when another player has joined
-    socket.on('player_join_game', function(data) {
-        $('#playerlist').append('<p>' + data['player_name'] + '</p>');
+  // submit name of new player
+  function select_displayname() {
+    socket.emit("player_join", {
+      displayname: document.getElementById("displayname").value,
+      gameId: document.getElementById("gameId").value,
     });
+    $("#select-displayname").hide();
+  }
 
-    // host can start the game
-    function startGame() {
-        socket.emit('host_start_game', {gameId: document.getElementById('gameId').value});
-    };
+  // event that triggers when another player has joined
+  socket.on("player_join_game", function (data) {
+    $("#playerlist").append("<p>" + data["player_name"] + "</p>");
+  });
 
-    // host can go to the next question
-    function getNext() {
-        socket.emit('get_next_question', {gameId: document.getElementById('gameId').value});
-    };
-
-    // when the game is started, go to the next question
-    socket.on('start_game', function(data) {
-        getNext();
+  // host can start the game
+  function startGame() {
+    socket.emit("host_start_game", {
+      gameId: document.getElementById("gameId").value,
     });
+  }
 
     // event that gets triggered when the next question arrives
     socket.on('next_question', function(data) {
@@ -191,45 +189,136 @@
         }, 1000);
     }
 
-    // prompt server to send results
-    function triggerLeaderboard() {
-        socket.emit('trigger_leaderboard', {gameId: document.getElementById('gameId').value});
+    // start the countdown, time that players have to choose an answer
+    countdownTilTimeUp(data);
+  });
+
+  // players can submit an answer
+  function submitAnswer(elemId, ans) {
+    var colors = ["#196fc1", "#c57117", "#30a45a", "#841aa2"];
+    if (document.getElementById("isHost").value != "True" && !answerSubmitted) {
+      socket.emit("submit_answer", {
+        gameId: document.getElementById("gameId").value,
+        answer: ans,
+      });
+      console.log(elemId);
+
+      document.getElementById(elemId).style.backgroundColor =
+        colors[parseInt(elemId[1])];
+      answerSubmitted = true;
     }
+  }
 
+  // event that gets triggered when the server returns the result, most selected answers
+  socket.on("question_result", function (data) {
+    // color the winning answers green, losing ones red
 
-    // event that gets triggered when server sends results
-    socket.on('show_leaderboard', function(data) {
-
-        // put together table (leaderboard)
-        var table = '<table><tr><th>Name</th><th>Points</th></tr>';
-        for(var elem of data['player_points']) {
-            table += '<tr><td>' + elem[0] + '</td><td>' + elem[1] + '</td></tr>';
+    for (var card of $("#answers").find(".card")) {
+      var winning = false;
+      for (var ans of data["winning_answers"]) {
+        if (ans == card.firstChild.firstChild.innerHTML) {
+          winning = true;
         }
-        table += '</table>';
+      }
+      if (winning) {
+        card.style.backgroundColor = "#12c93a";
+      } else {
+        card.style.backgroundColor = "#ff370c";
+      }
+    }
+  });
 
-        // show leaderboard
-        $('#display').replaceWith('<div id="display"><h2>Leaderboard</h2><div>' + table + '</div></div>');
+  function countdownTilTimeUp(data) {
+    var start = new Date().getTime();
 
-        // if it was the last question, show special button
-        if(data['isLast']) {
-            $('#hostAction').replaceWith('<div id="hostAction"><button onclick="finish()" class="btn btn-primary" data-bs-toggle="button">End</button></div>');
-        } else {
-            // display button to go to next questoin
-            $('#hostAction').replaceWith('<div id="hostAction"><button id = "next" onclick="getNext()" class="btn btn-primary" data-bs-toggle="button">Next Question!</button></div>');
+    // number of seconds the players have to submit answers
+    var cdTime = 30;
+
+    // function gets executed once every second
+    var x = setInterval(function () {
+      // number of seconds that passed
+      var now = new Date().getTime();
+      var timePassed = now - start;
+      var seconds = Math.floor((timePassed % (1000 * 60)) / 1000);
+
+      // update countdown
+      $("#countdown").replaceWith(
+        '<div id="countdown">' + (cdTime - seconds) + "</div>"
+      );
+
+      // if time is over
+      if (seconds > cdTime) {
+        // stop periodic execution
+        clearInterval(x);
+
+        // notify server that time is up
+        socket.emit("time_up", {
+          gameId: document.getElementById("gameId").value,
+        });
+
+        // update countdown
+        $("#countdown").replaceWith('<div id="countdown">Time Up!</div>');
+
+        // disable answer submission buttons
+        for (var child of document
+          .getElementById("answers")
+          .getElementsByTagName("button")) {
+          child.disabled = "disabled";
         }
+
+        // host sees button to continue, show leaderboard
+        if (document.getElementById("isHost").value == "True") {
+          $("#hostAction").show();
+          $("#hostAction").replaceWith(
+            '<div id="hostAction"><button id = "next" onclick="triggerLeaderboard()" class="btn btn-primary" data-bs-toggle="button">Show leaderboard</button></div>'
+          );
+        }
+      }
+    }, 1000);
+  }
+
+  // prompt server to send results
+  function triggerLeaderboard() {
+    socket.emit("trigger_leaderboard", {
+      gameId: document.getElementById("gameId").value,
     });
+  }
 
+  // event that gets triggered when server sends results
+  socket.on("show_leaderboard", function (data) {
+    // put together table (leaderboard)
+    var table = "<table><tr><th>Name</th><th>Points</th></tr>";
+    for (var elem of data["player_points"]) {
+      table += "<tr><td>" + elem[0] + "</td><td>" + elem[1] + "</td></tr>";
+    }
+    table += "</table>";
 
-    // TODO: get animation to work
+    // show leaderboard
+    $("#display").replaceWith(
+      '<div id="display"><h2>Leaderboard</h2><div>' + table + "</div></div>"
+    );
 
-    // $(document).ready(function() {
-    //     $('table').tableSort({
-    //         animation:'slide',
-    //         speed:500
-    //     });
-    // });
+    // if it was the last question, show special button
+    if (data["isLast"]) {
+      $("#hostAction").replaceWith(
+        '<div id="hostAction"><button onclick="finish()" class="btn btn-primary" data-bs-toggle="button">End</button></div>'
+      );
+    } else {
+      // display button to go to next questoin
+      $("#hostAction").replaceWith(
+        '<div id="hostAction"><button id = "next" onclick="getNext()" class="btn btn-primary" data-bs-toggle="button">Next Question!</button></div>'
+      );
+    }
+  });
 
+  // TODO: get animation to work
 
+  // $(document).ready(function() {
+  //     $('table').tableSort({
+  //         animation:'slide',
+  //         speed:500
+  //     });
+  // });
 </script>
 
 <div id="answerGrid" style="visibility: hiddem">

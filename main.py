@@ -25,72 +25,91 @@ player_by_sid = dict()
 # TODO: each question should have at least 2 answers (?)
 
 
+
+# list of questions
+# question format: {'question': question, 'answers': [ans0, ans1, ..., ansk]}
+QUESTIONS = [
+    {'question': 'A or B?', 'answers':['A', 'B']},
+    {'question': 'What is love?', 'answers': ['Baby don\'t hurt me', 'No more', 'Pizza']},
+    {'question': 'Why', 'answers': ['M', 'C', 'A', '!']}
+]
+
+
+GAME = {'questions': QUESTIONS, 'initialized': False, 'hasStarted': False, 'host_sid': None, 'players': dict(), 'next_question': 0, 'player_answers': [[] for _ in range(len(QUESTIONS))], 'num_players': 0}
+
+
+
+
+
+
 '''
 log some output to stdout on the server
 '''
 def log(msg):
     print("===== LOG =====\n" + str(msg) + "\n")
 
-'''
-Index page, initially shown to the user. Redirects to an existing game when provided with a gameId.
-'''
-@app.route('/', methods=['GET', 'POST'])
-def home():
-    if request.method == 'GET':
-        # show the index page
-        return render_template('index.html')
-    else: # request.method == POST
-        # post request is made if the user is looking to join an existing game, providing an id
-        gameId = request.form['gameId']
-        return redirect(url_for('game', game_id=gameId))
 
 
-'''
-Page where the user can create a new quiz. Each quiz can contain an unlimited number of questions, and each question can contain up to 4 answers.
-'''
-@app.route('/create/', methods=['GET', 'POST'])
-def create():
-    global games
-    if request.method == 'GET':
-        # initially, show the page with the blank form
-        return render_template('create_quiz.html')
-
-    else: # request.method == POST
-    # post request is made if the user sends the filled out form with questions and answers
-
-        # get next id (could also choose a random value between e.g. 00000 and 99999)
-        gameId = len(games)
-
-        # check how many questions the user entered, and store them together with the answers in a dict
-        i = 0
-        questions = []
-        while True:
-            # check for next question in the submitted form
-            if f'q{i}' not in request.form.keys():
-                break
-
-            question = request.form[f'q{i}'] 
-
-            # get the 4 answers (but leave empty answers away)
-            answers = [request.form[f'{i}_a{j}'] for j in range(4) if request.form[f'{i}_a{j}'] != '']
-
-            # TODO: should be at least 2 answers
+# '''
+# Index page, initially shown to the user. Redirects to an existing game when provided with a gameId.
+# '''
+# @app.route('/', methods=['GET', 'POST'])
+# def home():
+#     if request.method == 'GET':
+#         # show the index page
+#         return render_template('index.html')
+#     else: # request.method == POST
+#         # post request is made if the user is looking to join an existing game, providing an id
+#         gameId = request.form['gameId']
+#         return redirect(url_for('game', game_id=gameId))
 
 
-            i += 1
+# '''
+# Page where the user can create a new quiz. Each quiz can contain an unlimited number of questions, and each question can contain up to 4 answers.
+# '''
+# @app.route('/create/', methods=['GET', 'POST'])
+# def create():
+#     global games
+#     if request.method == 'GET':
+#         # initially, show the page with the blank form
+#         return render_template('create_quiz.html')
 
-            # if question was empty, skip before storing
-            if question == '':
-                continue 
+#     else: # request.method == POST
+#     # post request is made if the user sends the filled out form with questions and answers
+
+#         # get next id (could also choose a random value between e.g. 00000 and 99999)
+#         gameId = len(games)
+
+#         # check how many questions the user entered, and store them together with the answers in a dict
+#         i = 0
+#         questions = []
+#         while True:
+#             # check for next question in the submitted form
+#             if f'q{i}' not in request.form.keys():
+#                 break
+
+#             question = request.form[f'q{i}'] 
+
+#             # get the 4 answers (but leave empty answers away)
+#             answers = [request.form[f'{i}_a{j}'] for j in range(4) if request.form[f'{i}_a{j}'] != '']
+
+#             # TODO: should be at least 2 answers
+
+
+#             i += 1
+
+#             # if question was empty, skip before storing
+#             if question == '':
+#                 continue 
             
-            questions.append({'question': question, 'answers': answers})
+#             questions.append({'question': question, 'answers': answers})
 
 
-        # game is represented as a dict, containing all necessary info and various flags
-        games[gameId] = {'questions': questions, 'initialized': False, 'hasStarted': False, 'host_sid': None, 'players': dict(), 'next_question': 0, 'player_answers': [[] for _ in range(len(questions))], 'num_players': 0}
+#         # game is represented as a dict, containing all necessary info and various flags
+#         games[gameId] = {'questions': questions, 'initialized': False, 'hasStarted': False, 'host_sid': None, 'players': dict(), 'next_question': 0, 'player_answers': [[] for _ in range(len(questions))], 'num_players': 0}
 
 
-        return redirect(url_for('game', game_id=gameId))
+#         return redirect(url_for('game', game_id=gameId))
 
 
 
@@ -98,17 +117,21 @@ def create():
 '''
 Returns game page, the place where all the action happens. A game with a given id can be accessed by just adding <id>/ to the homepage link.
 '''
-@app.route('/<game_id>/')
-def game(game_id):
+@app.route('/') #@app.route('/<game_id>/')
+def run_game():
     try:
-        global games 
-        game_id = int(game_id)
+        # global games 
+        # game_id = int(game_id)
 
-        # check that game exists
-        if game_id not in games.keys():
-            return f"<h2>This game does not exist!</h2>"
+        #  # check that game exists
+        # if game_id not in games.keys():
+        #     return f"<h2>This game does not exist!</h2>"
+        # current_game = games[game_id]
 
-        current_game = games[game_id]
+
+        global GAME 
+        current_game = GAME
+       
 
         # if this game has not yet been initialized, we are the host
         host_flag = not current_game['initialized']
@@ -128,7 +151,7 @@ def game(game_id):
         player_list = list(players.keys())
 
         # show page
-        return render_template('game.html', id=game_id, isHost=host_flag, player_list=player_list)
+        return render_template('game.html', id=0, isHost=host_flag, player_list=player_list)
     except:
         return
 
@@ -138,9 +161,10 @@ used to identify the session id (connection) to the host
 '''
 @socketio.event
 def host_join(data):
+    global GAME
     if data['ishost'] == 'True':
         # store their session id
-        games[int(data['gameId'])]['host_sid'] = request.sid
+        GAME['host_sid'] = request.sid
 
 
 '''
@@ -148,17 +172,18 @@ event that gets triggered when a new player submits his name
 '''
 @socketio.event
 def player_join(data):
+    global GAME
 
     displayname = data['displayname']
     gameId = int(data['gameId'])
 
     # TODO: make sure no duplicate playernames
 
-    if games[gameId]['hasStarted']:
+    if GAME['hasStarted']:
         # cannot join anymore
         return 
 
-    players = games[gameId]['players']
+    players = GAME['players']
 
     # create new player
     players[displayname] = {'points': 0, 'prev_points':0 ,'sessionId': request.sid}
@@ -167,7 +192,7 @@ def player_join(data):
     player_by_sid[request.sid] = displayname
     
 
-    games[gameId]['num_players'] += 1
+    GAME['num_players'] += 1
 
     log(f"Player {displayname} joined game {gameId}.")
     
@@ -181,12 +206,14 @@ event that gets triggered when the host starts the game
 @socketio.event
 def host_start_game(data):
 
+
     gameId = int(data['gameId'])
+    global GAME
 
     # make sure it was triggered from host
-    if games[gameId]['host_sid'] == request.sid:
+    if GAME['host_sid'] == request.sid:
 
-        games[gameId]['hasStarted'] = True
+        GAME['hasStarted'] = True
 
         # notify the players that the game started (triggers their countdown)
         socketio.emit('start_game', {'gameId': gameId})
@@ -197,12 +224,12 @@ event that gets triggered when the previous round is over and next question shou
 '''
 @socketio.event
 def get_next_question(data):
-
+    global GAME
     gameId = int(data['gameId'])
-    current_game = games[gameId] 
+    current_game = GAME 
 
     # make sure it was triggered from host
-    if games[gameId]['host_sid'] == request.sid:
+    if GAME['host_sid'] == request.sid:
 
         # TODO: shouldn't be necessary, handled in html?
         if current_game['next_question'] >= len(current_game['questions']):
@@ -223,6 +250,7 @@ event that gets triggered when a player submits an answer
 '''
 @socketio.event
 def submit_answer(data):
+    global GAME
 
     try:
         gameId = int(data['gameId'])
@@ -231,10 +259,10 @@ def submit_answer(data):
 
         player_name = player_by_sid[request.sid]
 
-        current_question_id = games[gameId]['next_question'] - 1
+        current_question_id = GAME['next_question'] - 1
 
         # all the answers provided by players for this question
-        round_answers : list = games[gameId]['player_answers'][current_question_id]
+        round_answers : list = GAME['player_answers'][current_question_id]
 
         # order of submissions
         submission_no = len(round_answers) + 1
@@ -259,7 +287,8 @@ event that gets triggered when the countdown i.e. time for submitting answers is
 @socketio.event
 def time_up(data):
     gameId = int(data['gameId'])
-    current_game = games[gameId] 
+    global GAME
+    current_game = GAME 
 
     players = current_game['players']
 
@@ -322,8 +351,9 @@ event that gets triggered when the leaderboard should be shown
 '''
 @socketio.event
 def trigger_leaderboard(data):
+    global GAME
     gameId = int(data['gameId'])
-    current_game = games[gameId] 
+    current_game = GAME 
 
     players = current_game['players']
 

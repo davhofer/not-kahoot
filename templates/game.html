@@ -7,6 +7,7 @@ content %}
   <h3>Game Id: {{id}}!</h3>
 </div>
 
+{% if isHost %}
 <div id="display">
   <p>LOBBY</p>
   <p>waiting for players...</p>
@@ -18,14 +19,12 @@ content %}
     {% endfor %}
   </div>
 </div>
-
-{% if isHost %}
 <p>You are the host.</p>
 <div id="hostAction">
   <button
     id="start"
     onclick="startGame()"
-    class="btn btn-primary"
+    class="btn btn-primary button-h4g-green"
     data-bs-toggle="button"
   >
     Start game!
@@ -33,16 +32,31 @@ content %}
 </div>
 
 {% else %}
+<div id="display"></div>
 <div id="select-displayname">
-  <label for="displayname">Choose a display name</label
-  ><input type="text" id="displayname" />
-  <button
-    onclick="select_displayname()"
-    class="btn btn-primary"
-    data-bs-toggle="button"
-  >
-    Join
-  </button>
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <label for="displayname">Choose a display name</label>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <input type="text" id="displayname" class="displayname-input-field"/>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <button
+          onclick="select_displayname()"
+          class="btn btn-primary button-h4g-green"
+          data-bs-toggle="button"
+        >
+          Join
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
 
 {% endif %} {% endblock %} 
@@ -237,7 +251,7 @@ content %}
 
 </script>
 
-<div id="answerGrid" style="visibility: hiddem">
+<div id="answerGrid" style="visibility: hidden">
     <div id="answers" class="container">
         <div class="row">
             <div class="col">

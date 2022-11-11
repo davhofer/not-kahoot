@@ -107,8 +107,25 @@ content %}
         answerSubmitted = false;
 
 
-        var answerGrid = document.getElementById('answerGrid').innerHTML;
-
+        var answerGrid = `<div id="answers" class="container">
+                            <div class="row">
+                                <div class="col">
+                                    <div id='ans0'></div>
+                                </div>
+                                <div class="col">
+                                    <div id='ans1'></div>
+                                </div>
+                            </div>
+                            <div class="row" style="margin-top: 2em;">
+                                <div class="col">
+                                    <div id='ans2'></div>
+                                </div>
+                                <div class="col">
+                                    <div id='ans3'></div>
+                                </div>
+                            </div>
+                        </div>`; 
+                        
         // update the page, add question and answers
         $('#hostAction').hide();
         $('#display').replaceWith(`<div id="display"><div id="countdown">${cdTime}</div><div id="question"></div><div id="answers"></div></div>`);
@@ -251,26 +268,6 @@ content %}
 
 </script>
 
-<div id="answerGrid" style="visibility: hidden">
-    <div id="answers" class="container">
-        <div class="row">
-            <div class="col">
-                <div id='ans0'></div>
-            </div>
-            <div class="col">
-                <div id='ans1'></div>
-            </div>
-        </div>
-        <div class="row" style="margin-top: 2em;">
-            <div class="col">
-                <div id='ans2'></div>
-            </div>
-            <div class="col">
-                <div id='ans3'></div>
-            </div>
-        </div>
-    </div>
-</div>
 
 
 {% endblock %}

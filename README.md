@@ -16,6 +16,9 @@ To run the webserver:
 `python main.py`  
 then open the link shown in the console in the browser.
 
+## Hosting on PythonAnywhere
+https://medium.com/swlh/how-to-host-your-flask-app-on-pythonanywhere-for-free-df8486eb6a42
+
 
 ## TODO
 
@@ -44,7 +47,7 @@ Player screen:
 - show points received after round
 
 Host screen:
-- show no. answers submitted so for
+- show no. answers submitted so far
 - when time is up, display no. votes per answer
 
 - short countdown (3s) before each new question?

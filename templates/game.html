@@ -56,7 +56,7 @@ content %}
 
 
     // number of seconds the players have to submit answers
-    var cdTime = 20;
+    var cdTime = 10;
 
     $(document).ready(function() {
         socket.emit('host_join', {gameId: document.getElementById('gameId').value, ishost: document.getElementById('isHost').value});
@@ -70,6 +70,7 @@ content %}
 
     // event that triggers when another player has joined
     socket.on('player_join_game', function(data) {
+        console.log('on: player_join_game');
         $('#playerlist').append('<p>' + data['player_name'] + '</p>');
     });
 
@@ -85,11 +86,14 @@ content %}
 
     // when the game is started, go to the next question
     socket.on('start_game', function(data) {
+        console.log('on: start_game');
         getNext();
     });
 
     // event that gets triggered when the next question arrives
     socket.on('next_question', function(data) {
+
+        console.log('on: next_question');
         answerSubmitted = false;
 
 
@@ -101,27 +105,41 @@ content %}
         $('#question').replaceWith(`<div id="question">${data['question']}</div>`);
         $('#answers').replaceWith(answerGrid);
 
+        console.log(data['answers']);
+
+        if(data['answers'].length <= 2) {
+            $('#secondRow').remove();
+            $('#firstRow').css('height', '80%');
+        }
+
         for(var i=0; i<data['answers'].length; i++) {
             var ans = data['answers'][i];
             //$('#ans'+i).replaceWith('<div id="a' + i +'" class="card ans' + i + '" onclick="submitAnswer(' + "'a" + i + "'" +',' + "'" + ans +  "'" + ')"><div class="card-body"><p class="card-text">' + ans + '</p></div></div>');
-            $('#ans'+i).replaceWith(`<div id="a${i}" class="card ans${i}" onclick="submitAnswer('a${i}', '${ans}')"><div class="card-body"><p class="card-text">${ans}</p></div></div>`);
+            
+            // TODO: change host/client
+            $('#ans'+i).replaceWith(`<div id="a${i}" class="card ans${i}" style="height: 100%" onclick="submitAnswer('${i}')"><div class="card-body"><p class="card-text">${ans}</p></div></div>`);
 
         }  
 
         
         // start the countdown, time that players have to choose an answer       
         countdownTilTimeUp(data);
+
+        
         
     });
 
     // players can submit an answer
-    function submitAnswer(elemId, ans) {
+    function submitAnswer(id) {
         var colors = ['#196fc1', '#c57117', '#30a45a', '#841aa2'];
+
+        var elemId = 'a' + id;
         if(document.getElementById('isHost').value != 'True' && !answerSubmitted) {
-            socket.emit('submit_answer', {gameId: document.getElementById('gameId').value, answer: ans});
+            socket.emit('submit_answer', {gameId: document.getElementById('gameId').value, answerId: id});
+            console.log('submitted answer!');
             console.log(elemId);
 
-            document.getElementById(elemId).style.backgroundColor = colors[parseInt(elemId[1])];
+            document.getElementById(elemId).style.backgroundColor = colors[id];
             answerSubmitted = true;
         }
     };
@@ -129,23 +147,37 @@ content %}
     // event that gets triggered when the server returns the result, most selected answers
     socket.on('question_result', function(data){
 
+        console.log('on: question_result');
         // color the winning answers green, losing ones red
         
-        for(var card of $('#answers').find('.card')) {
-
-            var winning = false;
-            for(var ans of data['winning_answers']) {
-                if(ans == card.firstChild.firstChild.innerHTML) {
-                    winning = true;
-                }
-            }
-            if(winning) {
-                card.style.backgroundColor = '#12c93a';
-            } else {
-                card.style.backgroundColor = '#ff370c';
-            }
+        // for(var card of $('#answers').find('.card')) {
+        
             
+
+        for(var id=0;id<data['num_answers'];id++) {
+            if(data['winning_answer_ids'].includes(id.toString())) {
+                // winning color
+                document.getElementById('a'+id).style.backgroundColor = '#12c93a';
+            } else {
+                // losing color
+                document.getElementById('a'+id).style.backgroundColor = '#ff370c';
+            }
         }
+
+
+
+            // for(var ansId of data['winning_answer_ids']) {
+            //     if(ans == card.firstChild.firstChild.innerHTML) {
+            //         winning = true;
+            //     }
+            // }
+            // if(winning) {
+            //     card.style.backgroundColor = '#12c93a';
+            // } else {
+            //     card.style.backgroundColor = '#ff370c';
+            // }
+            
+        //}
         
     });
 
@@ -167,7 +199,8 @@ content %}
             $('#countdown').replaceWith(`<div id="countdown">${cdTime-seconds}</div>`);
 
             // if time is over
-            if(seconds > cdTime) {
+            if(seconds >= cdTime) {
+                answerSubmitted = true;
 
                 // stop periodic execution 
                 clearInterval(x);
@@ -204,6 +237,7 @@ content %}
 
     // event that gets triggered when server sends results
     socket.on('show_leaderboard', function(data) {
+        console.log('on: show_leaderboard');
 
         // put together table (leaderboard)
         var table = '<table><tr><th>Name</th><th>Points</th></tr>';
@@ -237,9 +271,9 @@ content %}
 
 </script>
 
-<div id="answerGrid" style="visibility: hiddem">
-    <div id="answers" class="container">
-        <div class="row">
+<div id="answerGrid" style="visibility: none">
+    <div id="answers" class="box">
+        <div id="firstRow" class="row" style="height: 45%">
             <div class="col">
                 <div id='ans0'></div>
             </div>
@@ -247,7 +281,7 @@ content %}
                 <div id='ans1'></div>
             </div>
         </div>
-        <div class="row" style="margin-top: 2em;">
+        <div id="secondRow" class="row" style="margin-top: 2em; height: 45%">
             <div class="col">
                 <div id='ans2'></div>
             </div>

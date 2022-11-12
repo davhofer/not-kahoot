@@ -151,7 +151,7 @@ def run_game():
         player_list = list(players.keys())
 
         # show page
-        return render_template('game.html', id=0, isHost=host_flag, player_list=player_list)
+        return render_template('game.html', id=0, isHost=host_flag, player_list=player_list, image='/static/qr-code(1).png')
     except:
         return
 

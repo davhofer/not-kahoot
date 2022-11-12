@@ -10,13 +10,22 @@ content %}
 {% if isHost %}
 <div id="display">
   <!-- <p>LOBBY</p> -->
-  <p>waiting for players...</p>
-  <div id="playerlist">
-    <h3>Players</h3>
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <img src="{{ image }}" alt="QR Code" width="250px"/>
+      </div>
+      <div class="col">
+        <p>waiting for players...</p>
+        <div id="playerlist">
+          <h3>Players</h3>
 
-    {% for player in player_list %}
-    <p>{{player}}</p>
-    {% endfor %}
+          {% for player in player_list %}
+          <p>{{player}}</p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 <p>You are the host.</p>

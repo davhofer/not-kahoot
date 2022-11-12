@@ -19,7 +19,7 @@ content %}
     {% endfor %}
   </div>
 </div>
-<p>You are the host.</p>
+<p> </p>
 <div id="hostAction">
   <button
     id="start"
@@ -140,11 +140,35 @@ content %}
         $('#answers').replaceWith(answerGrid);
 
         console.log(data['answers']);
+        var numAnswers = data['answers'].length;
 
-        if(data['answers'].length <= 2) {
-            $('#secondRow').remove();
-            $('#firstRow').css('height', '80%');
+        if(document.getElementById('isHost').value != 'True') {
+
+            var rem = document.getElementById('page').clientHeight - document.getElementById('header').clientHeight;
+            var newheight = rem/3.5;
+            $('#firstRow').css('height', newheight);
+            $('#secondRow').css('height', newheight);
+
+            if(data['answers'].length <= 2) {
+                $('#secondRow').remove();
+                $('#firstRow').css('height', 2*newheight);
+
+            }
+
+            // if(data['answers'].length <= 2) {
+            //     $('#secondRow').css('height', '60vh');
+
+            // } else {
+            //     $('#secondRow').css('height', '30vh');
+            // }
+        } else {
+            if(data['answers'].length <= 2) {
+                $('#secondRow').remove();
+                $('#firstRow').css('height', '90%');
+            }
         }
+
+        
 
         for(var i=0; i<data['answers'].length; i++) {
             var ans = data['answers'][i];
@@ -152,9 +176,9 @@ content %}
             
             // TODO: change host/client
             if(document.getElementById('isHost').value == 'True') {
-                $('#ans'+i).replaceWith(`<div id="a${i}" class="card ans${i} fullHW" onclick="submitAnswer('${i}')"><div class="card-body flexCenter"><div class="ansLetter">${letters[i]}</div><p class="card-text ansTextHost">${ans}</p></div></div>`);
+                $('#ans'+i).replaceWith(`<div id="a${i}" class="card ans${i}h fullHW"><div class="card-body flexCenter"><div class="ansLetter">${letters[i]}</div><p class="card-text ansTextHost">${ans}</p></div></div>`);
             } else {
-                $('#ans'+i).replaceWith(`<div id="a${i}" class="card ans${i} fullHW" onclick="submitAnswer('${i}')"><div class="card-body flexCenter"><p class="card-text">${letters[i]}</p></div></div>`);
+                $('#ans'+i).replaceWith(`<div id="a${i}" class="card ans${i} fullHW" onclick="submitAnswer('${i}', '${numAnswers}')"><div class="card-body flexCenter"><p class="card-text ansTextPlayer">${letters[i]}</p></div></div>`);
             }
             
         }  
@@ -168,7 +192,7 @@ content %}
     });
 
     // players can submit an answer
-    function submitAnswer(id) {
+    function submitAnswer(id, numAnswers) {
         var colors = ['#196fc1', '#c57117', '#30a45a', '#841aa2'];
 
         var elemId = 'a' + id;
@@ -178,8 +202,22 @@ content %}
             console.log(elemId);
 
             document.getElementById(elemId).style.backgroundColor = colors[id];
+            document.getElementById(elemId).style.border = '4px solid white';
+            // document.getElementById(elemId).style.outlineWidth = 1;
+            // document.getElementById(elemId).style.outlineColor = 'red';
+            
+                        
+            
             answerSubmitted = true;
+            for(var i=0;i<parseInt(numAnswers);i++) {
+                $('#a'+i).removeClass('ans'+i);
+                $('#a'+i).addClass('ans'+i+'h');
+            
+            }
         }
+
+        
+
     };
 
     // event that gets triggered when the server returns the result, most selected answers

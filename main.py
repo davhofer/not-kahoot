@@ -29,7 +29,7 @@ player_by_sid = dict()
 # list of questions
 # question format: {'question': question, 'answers': [ans0, ans1, ..., ansk]}
 QUESTIONS = [
-    {'question': 'A or B?', 'answers':['A', 'B']},
+    {'question': 'A or B?', 'answers':['A is a very nice letter. I like it a lot. A is a very nice letter. I like it a lot.', 'B']},
     {'question': 'What is love?', 'answers': ['Baby don\'t hurt me', 'No more', 'Pizza']},
     {'question': 'Why', 'answers': ['M', 'C', 'A', '!']}
 ]

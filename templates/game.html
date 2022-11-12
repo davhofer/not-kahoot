@@ -144,7 +144,7 @@ content %}
                         
         // update the page, add question and answers
         $('#hostAction').hide();
-        $('#display').replaceWith(`<div id="display"><div id="countdown">${cdTime}</div><div id="question"></div><div id="answers"></div></div>`);
+        $('#display').replaceWith(`<div id="display" style="display: flex; justify-content: center; align-items: center; flex-direction: column"><div id="countdown" class="countdown circle flexCenter"><div>${cdTime}</div></div><div id="question"></div><div id="answers"></div></div>`);
         $('#question').replaceWith(`<div id="question" class="question">${data['question']}</div>`);
         $('#answers').replaceWith(answerGrid);
 
@@ -281,7 +281,7 @@ content %}
             var seconds = Math.floor((timePassed % (1000 * 60)) / 1000);
 
             // update countdown
-            $('#countdown').replaceWith(`<div id="countdown">${cdTime-seconds}</div>`);
+            $('#countdown').replaceWith(`<div id="countdown" class="circle countdown flexCenter"><div>${cdTime-seconds}</div></div>`);
 
             // if time is over
             if(seconds >= cdTime) {
@@ -294,7 +294,7 @@ content %}
                 socket.emit('time_up', {gameId: document.getElementById('gameId').value})
 
                 // update countdown
-                $('#countdown').replaceWith('<div id="countdown">Time Up!</div>');
+                $('#countdown').replaceWith('<div id="countdown" class="countdown">Time Up!</div>');
                 
                 // disable answer submission buttons
                 for(var child of document.getElementById('answers').getElementsByTagName('button')) {

@@ -325,9 +325,11 @@ content %}
         console.log('on: show_leaderboard');
 
         // put together table (leaderboard)
-        var table = '<table><tr><th>Name</th><th>Points</th></tr>';
-        for(var elem of data['player_points']) {
-            table += '<tr><td>' + elem[0] + '</td><td>' + elem[1] + '</td></tr>';
+        var table = '<table style="margin: 0 auto"><tr><th></th><th class="left-col table-header"">Name</th><th class="table-header">Points</th></tr>';
+        for(var [index, elem] of data['player_points'].entries()) {
+            if (index < 10) {
+              table += '<tr><td class="left-col table-header">' + (index+1) + '</td><td class="left-col">' + elem[0] + '</td><td>' + elem[1] + '</td></tr>';
+            }
         }
         table += '</table>';
 

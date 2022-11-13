@@ -94,7 +94,7 @@ content %}
 
     socket.on('confirm_player', function(data) {
       $('#displayPlayerName').append(data['player_name']);
-      $('#display').append(`<div class="playerInfoMsg">Welcome, <i>${data['player_name']}</i>! Waiting for the host to start the game...</div>`);
+      $('#display').append(`<div class="playerInfoMsg">Welcome, ${data['player_name']}! Waiting for the host to start the game...</div>`);
     });
 
     socket.on('reject_player', function(data) {
@@ -430,11 +430,16 @@ content %}
             if(elem[0] == player) {
               
               msg = `You received ${elem[2]} points and are on the ${rank+1}. place`;
-              if(rank == 0) {
-                msg += `, ${elem[1] - data['player_points'][1][1]} points ahead of the 2. place.`;
+              if(data['player_points'].length > 1) {
+                if(rank == 0) {
+                    msg += `, ${elem[1] - data['player_points'][1][1]} points ahead of the 2. place.`;
+                  } else {
+                    msg += `, ${data['player_points'][rank-1][1] - elem[1]} points behind the ${rank}. place.`;
+                }
               } else {
-                msg += `, ${data['player_points'][rank-1][1] - elem[1]} points behind the ${rank}. place.`;
+                msg += '.';
               }
+              
               break;
             }
           }

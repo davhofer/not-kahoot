@@ -152,6 +152,7 @@ content %}
         var numAnswers = data['answers'].length;
 
         if(document.getElementById('isHost').value != 'True') {
+            $('#question').remove();
 
             var rem = document.getElementById('page').clientHeight - document.getElementById('header').clientHeight;
             var newheight = rem/3.5;

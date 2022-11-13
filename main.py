@@ -304,23 +304,28 @@ def time_up(data):
     current_round = current_game['next_question'] - 1
 
     valid_answers = current_game['questions'][current_round]['answers']
+    print(valid_answers)
 
 
 
     player_answers = current_game['player_answers'][current_round]
+    print(player_answers)
 
     # which anwers (unique) were submitted
-    uniq_ans = [ans[1] for ans in player_answers]
+    answered_ids = [ans[1] for ans in player_answers]
+
+    uniq_answered_ids = list(set(answered_ids))
 
     # for each of them, how often
-    uniq_ans_count = [uniq_ans.count(ans) for ans in uniq_ans]
+    answer_counts = [answered_ids.count(str(id)) for id, _ in enumerate(valid_answers)]
 
     # max number
-
-    max_count = 0 if len(uniq_ans_count) == 0 else max(uniq_ans_count)
+    max_count = 0 if len(answer_counts) == 0 else max(answer_counts)
 
     # get answers which were submitted the max number of times
-    winning_answer_ids = [uniq_ans[i] for i in range(len(uniq_ans)) if uniq_ans_count[i] == max_count]
+    winning_answer_ids = [uniq_answered_ids[i] for i in range(len(uniq_answered_ids)) if answer_counts[int(uniq_answered_ids[i])] == max_count]
+    print("winning")
+    print(winning_answer_ids)
 
     # players that submitted a winning answer
     winning_players = [(ans[0], ans[2]) for ans in player_answers if ans[1] in winning_answer_ids]
@@ -352,7 +357,7 @@ def time_up(data):
 
     # send the winning answers to the players
     # TODO: send number of submissions for each answer, to display it nicely with the results
-    socketio.emit('question_result', {'winning_answer_ids': winning_answer_ids, 'num_answers': len(valid_answers)})
+    socketio.emit('question_result', {'winning_answer_ids': winning_answer_ids, 'num_answers': len(valid_answers), 'answer_counts': answer_counts, 'max_count': max_count})
     
 
 

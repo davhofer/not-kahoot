@@ -186,7 +186,7 @@ def player_join(data):
     players = GAME['players']
 
     # create new player
-    players[displayname] = {'points': 0, 'prev_points':0 ,'sessionId': request.sid}
+    players[displayname] = {'points': 0, 'prev_points':0 ,'sessionId': request.sid, 'points_received': 0}
 
     # also store map from session id to player name
     player_by_sid[request.sid] = displayname
@@ -346,18 +346,28 @@ def time_up(data):
     # for player_name in players.keys():
     #     players[player_name]['prev_points'] = players[player_name]['points']
 
+
+    player_points = {name: 0 for name in players.keys()}
+
+    for p in players.keys():
+        players[p]['points_received'] = 0
+
     # reward points
     for i in range(len(winning_players)):
-        player_name = winning_players[i][0]     
+        player_name = winning_players[i][0]    
+
+        points_received = 2*n-i 
 
         # give points
-        players[player_name]['points'] += 2*n-i 
+        players[player_name]['points'] += points_received 
+        players[player_name]['points_received'] = points_received 
+        
 
     
 
     # send the winning answers to the players
     # TODO: send number of submissions for each answer, to display it nicely with the results
-    socketio.emit('question_result', {'winning_answer_ids': winning_answer_ids, 'num_answers': len(valid_answers), 'answer_counts': answer_counts, 'max_count': max_count})
+    socketio.emit('question_result', {'winning_answer_ids': winning_answer_ids, 'num_answers': len(valid_answers), 'answer_counts': answer_counts, 'max_count': max_count, 'player_points': player_points})
     
 
 
@@ -376,7 +386,7 @@ def trigger_leaderboard(data):
         return
         
     # get players, their current points, and points before this round (for animation purposes)
-    player_points = [(p, players[p]['points'], players[p]['prev_points']) for p in players.keys()]
+    player_points = [(p, players[p]['points'], players[p]['points_received']) for p in players.keys()]
 
     # sort by current points
     player_points = sorted(player_points, key=lambda x:x[1])

@@ -2,6 +2,7 @@
 content %}
 <input id="gameId" type="hidden" value="{{id}}" />
 <input id="isHost" type="hidden" value="{{isHost}}" />
+<input id="playerName" type="hidden" value="" />
 
 <!-- <div class="form-field">
   <h3>Game Id: {{id}}!</h3>
@@ -88,6 +89,7 @@ content %}
     function select_displayname() {
         socket.emit('player_join', {displayname: document.getElementById('displayname').value, gameId: document.getElementById('gameId').value});
         $('#select-displayname').hide();
+        document.getElementById('playerName').value = document.getElementById('displayname').value;
     };
 
     // event that triggers when another player has joined
@@ -229,11 +231,15 @@ content %}
 
     };
 
-    function move(ansid, maxval, overall_max, baseWidth) {
-      var elem = document.getElementById(`progbar${ansid}`);  
+    function move(ansid, maxval, overall_max, baseWidth, isHost) {
+      if(isHost) {
+        var elem = document.getElementById(`progbar${ansid}`);  
+      }
       var parent = document.getElementById('a' + ansid);
+
       var votes = 0;
       var id = setInterval(frame, 600);
+
       function frame() {
         if (votes >= maxval) {
           clearInterval(id);
@@ -246,8 +252,10 @@ content %}
           votes++; 
           width = (Math.trunc((100-baseWidth) * (votes/overall_max)) + baseWidth) * 1;
           console.log(width);
-          elem.style.width = width + '%'; 
-          elem.innerHTML = votes * 1;
+          if(isHost) {
+            elem.style.width = width + '%'; 
+            elem.innerHTML = votes * 1;
+          }
         }
       }
     };
@@ -270,16 +278,21 @@ content %}
 
         setTimeout(function() {
           for(var id=0;id<data['num_answers'];id++) {
-            var elemId = '#ans' + id + 'p';
-            $(elemId).replaceWith(`<div class="w3-light-grey ansTextHost">
-            <div id="progbar${id}" class="w3-container w3-green" style="width:${baseWidth}%; font-weight: 800;">0</div>
-            </div>
-            </div>`);
+
+            var isHost = document.getElementById('isHost').value == 'True';
+            if(isHost) {
+              var elemId = '#ans' + id + 'p';
+              $(elemId).replaceWith(`<div class="w3-light-grey ansTextHost">
+              <div id="progbar${id}" class="w3-container w3-green" style="width:${baseWidth}%; font-weight: 800;">0</div>
+              </div>
+              </div>`);
+            }
+            
           }
 
           setTimeout(function() {
             for(var id=0;id<data['num_answers'];id++) {
-              move(id, answer_counts[id], max_count, baseWidth);
+              move(id, answer_counts[id], max_count, baseWidth, isHost);
             }
           }, 1000);
           
@@ -391,8 +404,35 @@ content %}
         }
         table += '</table>';
 
+        
+
+        // show info for current player
+        var msg = '';
+
+        if(document.getElementById('isHost') != 'True') {
+          var player = document.getElementById('playerName').value;
+          for(var [rank, elem] of data['player_points'].entries()) {
+            if(elem[0] == player) {
+              
+              msg = `You received ${elem[2]} points and are on the ${rank+1}. place`;
+              if(rank == 0) {
+                msg += `, ${elem[1] - data['player_points'][1][1]} points ahead of the 2. place.`;
+              } else {
+                msg += `, ${data['player_points'][rank-1][1] - elem[1]} points behind the ${rank}. place.`;
+              }
+              break;
+            }
+          }
+          msg = '<br><br>' + msg;
+          
+        }
+
+
+        
+
         // show leaderboard
-        $('#display').replaceWith('<div id="display"><h2>Leaderboard</h2><div>' + table + '</div></div>');
+        $('#display').replaceWith('<div id="display"><h2>Leaderboard</h2><div>' + table + '</div>' + msg + '</div>');
+
 
         // if it was the last question, show special button
         if(data['isLast']) {

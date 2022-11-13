@@ -12,16 +12,15 @@ content %}
   <!-- <p>LOBBY</p> -->
   <div class="container">
     <div class="row">
-      <div class="col">
+      <div class="col-lg-4">
         <img src="{{ image }}" alt="QR Code" width="250px"/>
       </div>
-      <div class="col">
+      <div class="col-lg-8">
+        <h3>Players</h3>
         <p>waiting for players...</p>
-        <div id="playerlist">
-          <h3>Players</h3>
-
+        <div id="playerlist", class="player-grid">
           {% for player in player_list %}
-          <p>{{player}}</p>
+          <div class="player-grid-item">{{player}}</div>
           {% endfor %}
         </div>
       </div>
@@ -94,7 +93,7 @@ content %}
     // event that triggers when another player has joined
     socket.on('player_join_game', function(data) {
         console.log('on: player_join_game');
-        $('#playerlist').append('<p>' + data['player_name'] + '</p>');
+        $('#playerlist').append('<p class="player-grid-item">' + data['player_name'] + '</p>');
     });
 
     // host can start the game

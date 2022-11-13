@@ -138,12 +138,36 @@
                 font-weight: 800;
             }
 
-            .game-name-small {
+            /* .game-name-small {
                 width: 100%;
                 height: 20vh;
                 text-align: right;
                 font-size: 25pt;
                 font-weight: 800;
+            } */
+            .header-container {
+                width: 100%;
+                height: 20vh;
+                padding-top: 30px;
+                padding-left: 30px;
+                padding-right: 30px;
+            }
+
+            .game-name-small {
+                width: 60%;
+                float: right;
+                font-size: 25pt;
+                font-weight: 800;
+                text-align: right;
+            }
+
+            .player-name {
+                width: 40%;
+                float: left;
+                text-align: left;
+                font-size: 18pt;
+                font-weight: 400;
+                word-wrap: break-word;
             }
 
             .left-col {
@@ -232,9 +256,9 @@
 
             }
 
-            .playerStandingsInfo {
+            .playerInfoMsg {
                 font-size: 20pt;
-                font-weight: 800;
+                font-weight: 400;
                 color: white;
             }
 
@@ -293,14 +317,16 @@
                 font-weight: 400;
 
             }
+
+            
             
         
          
 
         </style>
         <div id="page" class="page">
-            <div id="header" class="game-name-small">
-                <div style="padding-top: 30px; padding-right: 30px;">Vote4Most</div>
+            <div id="header" class="header-container">
+                <div id="displayPlayerName" class="player-name"></div><div class="game-name-small">Vote4Most</div>
             </div>
             <div class="container">
                 <div class="row content">

@@ -92,6 +92,21 @@ content %}
         document.getElementById('playerName').value = document.getElementById('displayname').value;
     };
 
+    socket.on('confirm_player', function(data) {
+      $('#displayPlayerName').append(data['player_name']);
+      $('#display').append(`<div class="playerInfoMsg">Welcome, <i>${data['player_name']}</i>! Waiting for the host to start the game...</div>`);
+    });
+
+    socket.on('reject_player', function(data) {
+
+      var markup = `<div id="select-displayname"><div class="container"><div class="row"><div class="col">
+        <div class="playerInfoMsg" style="color: red; font-size: 12pt;">This name is already taken, please choose a new one!</div>
+        <label for="displayname">Choose a display name</label></div></div><div class="row"><div class="col"><input type="text" id="displayname" class="displayname-input-field"/></div></div><div class="row"><div class="col"><button onclick="select_displayname()" class="btn btn-primary button-h4g-green" data-bs-toggle="button">
+          Join</button></div></div></div></div>`;
+
+      $('#select-displayname').replaceWith(markup);
+    });
+
     // event that triggers when another player has joined
     socket.on('player_join_game', function(data) {
         console.log('on: player_join_game');

@@ -185,7 +185,7 @@ content %}
             
             // TODO: change host/client
             if(document.getElementById('isHost').value == 'True') {
-                $('#ans'+i).replaceWith(`<div id="a${i}" class="card ans${i}h fullHW"><div class="card-body flexCenter"><div class="ansLetter">${letters[i]}</div><p class="card-text ansTextHost">${ans}</p></div></div>`);
+                $('#ans'+i).replaceWith(`<div id="a${i}" class="card ans${i}h fullHW"><div class="card-body flexCenter"><div class="ansLetter">${letters[i]}</div><p id='ans${i}p' class="card-text ansTextHost">${ans}</p></div></div>`);
             } else {
                 $('#ans'+i).replaceWith(`<div id="a${i}" class="card ans${i} fullHW" onclick="submitAnswer('${i}', '${numAnswers}')"><div class="card-body flexCenter"><p class="card-text ansTextPlayer">${letters[i]}</p></div></div>`);
             }
@@ -229,27 +229,83 @@ content %}
 
     };
 
+    function move(ansid, maxval, overall_max, baseWidth) {
+      var elem = document.getElementById(`progbar${ansid}`);  
+      var parent = document.getElementById('a' + ansid);
+      var votes = 0;
+      var id = setInterval(frame, 600);
+      function frame() {
+        if (votes >= maxval) {
+          clearInterval(id);
+          if(maxval == overall_max) {
+            parent.style.backgroundColor = '#12c93a';
+          } else {
+            parent.style.backgroundColor = '#ff370c';
+          }
+        } else {
+          votes++; 
+          width = (Math.trunc((100-baseWidth) * (votes/overall_max)) + baseWidth) * 1;
+          console.log(width);
+          elem.style.width = width + '%'; 
+          elem.innerHTML = votes * 1;
+        }
+      }
+    };
+
     // event that gets triggered when the server returns the result, most selected answers
     socket.on('question_result', function(data){
 
         console.log('on: question_result');
+        console.log(data);
         // color the winning answers green, losing ones red
         
         // for(var card of $('#answers').find('.card')) {
 
-        var answer_counts = data['answer_counts']
+        var answer_counts = data['answer_counts'];
+        var max_count = data['max_count'];
+
+        // for each answer, create an interval function that updates the count
+
+        var baseWidth = 12;
+
+        setTimeout(function() {
+          for(var id=0;id<data['num_answers'];id++) {
+            var elemId = '#ans' + id + 'p';
+            $(elemId).replaceWith(`<div class="w3-light-grey ansTextHost">
+            <div id="progbar${id}" class="w3-container w3-green" style="width:${baseWidth}%; font-weight: 800;">0</div>
+            </div>
+            </div>`);
+          }
+
+          setTimeout(function() {
+            for(var id=0;id<data['num_answers'];id++) {
+              move(id, answer_counts[id], max_count, baseWidth);
+            }
+          }, 1000);
+          
+
+
+        //   for(var id=0;id<data['num_answers'];id++) {
+        //     if(data['winning_answer_ids'].includes(id.toString())) {
+        //         // winning color
+        //         document.getElementById('a'+id).style.backgroundColor = '#12c93a';
+        //     } else {
+        //         // losing color
+        //         document.getElementById('a'+id).style.backgroundColor = '#ff370c';
+        //     }
+        //  }
+
+
+
+
+        }, 700);
         
             
 
-        for(var id=0;id<data['num_answers'];id++) {
-            if(data['winning_answer_ids'].includes(id.toString())) {
-                // winning color
-                document.getElementById('a'+id).style.backgroundColor = '#12c93a';
-            } else {
-                // losing color
-                document.getElementById('a'+id).style.backgroundColor = '#ff370c';
-            }
-        }
+        
+
+        
+
 
 
 

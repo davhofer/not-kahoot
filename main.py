@@ -357,7 +357,7 @@ def time_up(data):
 
     # send the winning answers to the players
     # TODO: send number of submissions for each answer, to display it nicely with the results
-    socketio.emit('question_result', {'winning_answer_ids': winning_answer_ids, 'num_answers': len(valid_answers), 'answer_counts': answer_counts})
+    socketio.emit('question_result', {'winning_answer_ids': winning_answer_ids, 'num_answers': len(valid_answers), 'answer_counts': answer_counts, 'max_count': max_count})
     
 
 

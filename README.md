@@ -19,6 +19,7 @@ then open the link shown in the console in the browser.
 ## Hosting on PythonAnywhere
 https://medium.com/swlh/how-to-host-your-flask-app-on-pythonanywhere-for-free-df8486eb6a42
 
+To play the game, visit here:
 https://majority-mins.herokuapp.com
 
 

@@ -185,6 +185,15 @@ def player_join(data):
 
     players = GAME['players']
 
+
+    # check that player does not yet exist
+    if displayname in players.keys():
+        print('duplicate name ' + displayname)
+        emit('reject_player')
+        return
+
+    emit('confirm_player', {'player_name': displayname})
+
     # create new player
     players[displayname] = {'points': 0, 'prev_points':0 ,'sessionId': request.sid, 'points_received': 0}
 

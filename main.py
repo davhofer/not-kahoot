@@ -33,7 +33,7 @@ QUESTIONS = [
     {'question': 'Hack4Good or Hack4Bad', 'answers':['Hack4Good', 'Hack4Bad']},
     {'question': 'Pineapple on pizza?', 'answers':['I\'m Italian', 'U! S! A!', 'I like it, but shhhht!']},
     {'question': 'Windows or Mac?', 'answers':['Windows', 'Mac', 'Linux']},
-    {'question': 'Let\'s talk voice messages!', 'answers':['Wha\'s a voice message?', 'I\'m annoying my friends.', 'I get annoyed.']},
+    {'question': 'Let\'s talk voice messages!', 'answers':['Wha\'s a voice message?', 'I get annoyed.', 'I\'m annoying my friends.']},
     {'question': 'Doing sports or watching sports?', 'answers':['Let\'s hit the gym, bro!', 'Eurosport - best TV channel!']},
     {'question': 'Data or science?', 'answers':['Data', 'Science']},
     {'question': 'Do you like dad jokes?', 'answers': ['How do celebs stay cool? They have fans.', 'I like moms.']},

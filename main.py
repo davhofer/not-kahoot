@@ -29,9 +29,21 @@ player_by_sid = dict()
 # list of questions
 # question format: {'question': question, 'answers': [ans0, ans1, ..., ansk]}
 QUESTIONS = [
-    {'question': 'A or B?', 'answers':['A is a very nice letter. I like it a lot. A is a very nice letter. I like it a lot.', 'B']},
-    {'question': 'What is love?', 'answers': ['Baby don\'t hurt me', 'No more', 'Pizza']},
-    {'question': 'Why', 'answers': ['M', 'C', 'A', '!']}
+    {'question': 'What do you put first: milk or cereal?', 'answers':['Milk', 'Cereal']},
+    {'question': 'Hack4Good or Hack4Bad', 'answers':['Hack4Good', 'Hack4Bad']},
+    {'question': 'Pineapple on pizza?', 'answers':['I\'m Italian', 'U! S! A!', 'I like it, but shhhht!']},
+    {'question': 'Windows or Mac?', 'answers':['Windows', 'Mac', 'Linux']},
+    {'question': 'Let\'s talk voice messages!', 'answers':['Wha\'s a voice message?', 'I\'m annoying my friends.', 'I get annoyed.']},
+    {'question': 'Doing sports or watching sports?', 'answers':['Let\'s hit the gym, bro!', 'Eurosport - best TV channel!']},
+    {'question': 'Data or science?', 'answers':['Data', 'Science']},
+    {'question': 'Do you like dad jokes?', 'answers': ['How do celebs stay cool? They have fans.', 'I like moms.']},
+    {'question': 'Einstein or Hawking?', 'answers': ['Cool haircut', 'Cool computer voice']},
+    {'question': 'What\'s the meaning of life?', 'answers': ['Love', 'Pizza', 'God', '42']},
+    {'question': 'Why?', 'answers': ['M', 'C', 'A']},
+    {'question': 'How?', 'answers': ['Dr. House', 'Dwight D. Eisenhower']},
+    {'question': 'What\'s objectively the best time?', 'answers': ['06:52', '13:07', '21:48']},
+    {'question': 'How many balls fit in this room?', 'answers': ['Blue', 'Wood', 'Trousers']},
+    {'question': 'Hack4Good', 'answers': ['Hack', '4', 'Good']}
 ]
 
 

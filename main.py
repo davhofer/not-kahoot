@@ -434,6 +434,6 @@ if __name__ == '__main__':
             print('Each question can have max. 4 answers!')
             exit()
 
-    #socketio.run(app)
-    app.run()
+    socketio.run(app, cors_allowed_origins=['http://majority-wins.herokuapp.com', 'https://majority-wins.herokuapp.com'])
+    #app.run()
 

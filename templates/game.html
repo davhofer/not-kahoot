@@ -252,8 +252,11 @@ content %}
       }
       var parent = document.getElementById('a' + ansid);
 
+      var timeStartEnd = 2500;
+      var timeInterval = timeStartEnd/overall_max;
+
       var votes = 0;
-      var id = setInterval(frame, 600);
+      var id = setInterval(frame, timeInterval);
 
       function frame() {
         if (votes >= maxval) {

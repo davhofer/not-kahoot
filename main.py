@@ -2,7 +2,7 @@ from flask import Flask, redirect, url_for, render_template, request
 from flask_socketio import SocketIO, emit
 
 app = Flask(__name__)
-app.config['SECRET'] = 'secretkey'
+app.config['SECRET'] = 'secrosagfoauffaofaouseoetkey'
 
 socketio = SocketIO(app)
 

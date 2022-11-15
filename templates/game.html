@@ -79,7 +79,7 @@ content %}
 
 
     // number of seconds the players have to submit answers
-    var cdTime = 10;
+    var cdTime = 20;
 
     $(document).ready(function() {
         socket.emit('host_join', {gameId: document.getElementById('gameId').value, ishost: document.getElementById('isHost').value});

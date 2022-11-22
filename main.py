@@ -28,22 +28,36 @@ player_by_sid = dict()
 
 # list of questions
 # question format: {'question': question, 'answers': [ans0, ans1, ..., ansk]}
+# QUESTIONS = [
+#     {'question': 'What do you put first: milk or cereal?', 'answers':['Milk', 'Cereal']},
+#     {'question': 'Hack4Good or Hack4Bad', 'answers':['Hack4Good', 'Hack4Bad']},
+#     {'question': 'Pineapple on pizza?', 'answers':['I\'m Italian', 'U! S! A!', 'I like it, but shhhht!']},
+#     {'question': 'Windows or Mac?', 'answers':['Windows', 'Mac', 'Linux']},
+#     {'question': 'Let\'s talk voice messages!', 'answers':['Wha\'s a voice message?', 'I get annoyed.', 'I\'m annoying my friends.']},
+#     {'question': 'Doing sports or watching sports?', 'answers':['Let\'s hit the gym, bro!', 'Eurosport - best TV channel!']},
+#     {'question': 'Data or science?', 'answers':['Data', 'Science']},
+#     {'question': 'Do you like dad jokes?', 'answers': ['How do celebs stay cool? They have fans.', 'I like moms.']},
+#     {'question': 'Einstein or Hawking?', 'answers': ['Cool haircut', 'Cool computer voice']},
+#     {'question': 'What\'s the meaning of life?', 'answers': ['Love', 'Pizza', 'God', '42']},
+#     {'question': 'Why?', 'answers': ['M', 'C', 'A']},
+#     {'question': 'How?', 'answers': ['Dr. House', 'Dwight D. Eisenhower']},
+#     {'question': 'What\'s objectively the best time?', 'answers': ['06:52', '13:07', '21:48']},
+#     {'question': 'How many balls fit in this room?', 'answers': ['Blue', 'Wood', 'Trousers']},
+#     {'question': 'Hack4Good', 'answers': ['Hack', '4', 'Good']}
+# ]
+
 QUESTIONS = [
-    {'question': 'What do you put first: milk or cereal?', 'answers':['Milk', 'Cereal']},
-    {'question': 'Hack4Good or Hack4Bad', 'answers':['Hack4Good', 'Hack4Bad']},
-    {'question': 'Pineapple on pizza?', 'answers':['I\'m Italian', 'U! S! A!', 'I like it, but shhhht!']},
-    {'question': 'Windows or Mac?', 'answers':['Windows', 'Mac', 'Linux']},
-    {'question': 'Let\'s talk voice messages!', 'answers':['Wha\'s a voice message?', 'I get annoyed.', 'I\'m annoying my friends.']},
-    {'question': 'Doing sports or watching sports?', 'answers':['Let\'s hit the gym, bro!', 'Eurosport - best TV channel!']},
-    {'question': 'Data or science?', 'answers':['Data', 'Science']},
-    {'question': 'Do you like dad jokes?', 'answers': ['How do celebs stay cool? They have fans.', 'I like moms.']},
-    {'question': 'Einstein or Hawking?', 'answers': ['Cool haircut', 'Cool computer voice']},
-    {'question': 'What\'s the meaning of life?', 'answers': ['Love', 'Pizza', 'God', '42']},
-    {'question': 'Why?', 'answers': ['M', 'C', 'A']},
-    {'question': 'How?', 'answers': ['Dr. House', 'Dwight D. Eisenhower']},
-    {'question': 'What\'s objectively the best time?', 'answers': ['06:52', '13:07', '21:48']},
-    {'question': 'How many balls fit in this room?', 'answers': ['Blue', 'Wood', 'Trousers']},
-    {'question': 'Hack4Good', 'answers': ['Hack', '4', 'Good']}
+    {'question': 'To start or to finish', 'answers': ['To start', 'To finish']},
+    {'question': 'To plan or to test', 'answers': ['To plan', 'To test']},
+    {'question': 'Work during the whole duration or do all the work in end', 'answers': ['Whole duration', 'Wait \'till the last moment']},
+    {'question': 'Hackday or Hacknight', 'answers': ['Hackday', 'Hacknight']},
+    {'question': 'Making Presentation slides or holding a presentation', 'answers': ['Making slides', 'Holding presentation']},
+    {'question': 'Nature or People', 'answers': ['Nature', 'People']},
+    {'question': 'Regression or Classification', 'answers': ['Regression', 'Classification']},
+    {'question': 'PyCharm or VisualStudioCode', 'answers': ['Pycharm', 'VSCode']},
+    {'question': 'Light theme or dark theme', 'answers': ['Let there be light!', 'Come to the dark side!']},
+    {'question': 'Best time to do work', 'answers': ['In the morning', 'Late at night']},
+    {'question': 'Become an organiser?', 'answers': ['Yes', 'Of course.', 'Yes!', 'Ja (yes but in german)']},
 ]
 
 
